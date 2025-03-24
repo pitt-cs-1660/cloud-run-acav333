@@ -114,13 +114,31 @@ async function vote(team) {
     // Retrieve JWT to identify the user to the Identity Platform service.
     // Returns the current token if it has not expired. Otherwise, this will
     // refresh the token and return a new one.
+    console.log(`passed if statement!!!!`);
     try {
       const token = await createIdToken();
 
-      /*
-       * ++++ YOUR CODE HERE ++++
-       */
-      window.alert(`Not implemented yet!`);
+      const voteData = new URLSearchParams();
+      voteData.append("team", team);
+
+      const response = await fetch("https://tabs-vs-spaces-309333153255.us-central1.run.app/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Authorization": `Bearer ${token}`  
+        },
+        body: voteData
+      });
+      
+      const result = await response.json();
+
+ 
+      if (response.ok && result.message === "Vote successfully recorded") {
+        alert("Your vote has been successfully recorded!");
+        window.location.reload();
+      } else {
+        alert("There was an error recording your vote: " + (result.message || "Unknown error"));
+      }
 
     } catch (err) {
       console.log(`Error when submitting vote: ${err}`);
